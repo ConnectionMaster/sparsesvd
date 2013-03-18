@@ -16,11 +16,12 @@ if sys.version_info[:2] < (2, 5):
     raise Exception('This version of sparsesvd needs Python 2.5 or later.')
 
 sourcefiles = ['sparsesvd.pyx', 'SVDLIBC/las2.c', 'SVDLIBC/svdutil.c', 'SVDLIBC/svdlib.c']
+depends = ['SVDLIBC/svdutil.h', 'SVDLIBC/svdlib.h', 'SVDLIBC/Makefile']
 
 def setup_package():
     META_DATA = dict(
         name = 'sparsesvd',
-        version = '0.1.9-disqus0',
+        version = '0.1.9-disqus2',
         description = 'Python module that wraps SVDLIBC, a library for sparse Singular Value Decomposition.',
         long_description = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
         license = 'BSD',
@@ -75,7 +76,7 @@ def setup_package():
         from numpy.distutils.misc_util import get_numpy_include_dirs
 
         META_DATA['cmdclass'] = {'build_ext': build_ext}
-        META_DATA['ext_modules'] = [Extension("sparsesvd", sourcefiles, include_dirs=get_numpy_include_dirs())]
+        META_DATA['ext_modules'] = [Extension("sparsesvd", sourcefiles, depends=depends, include_dirs=get_numpy_include_dirs())]
 
     from setuptools import setup
 
