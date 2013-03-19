@@ -18,60 +18,68 @@ if sys.version_info[:2] < (2, 5):
 import ez_setup
 ez_setup.use_setuptools()
 
-from setuptools import setup, Extension
-
-from numpy.distutils.misc_util import get_numpy_include_dirs
-
-
-
-module = Extension('sparsesvd',
-                    extra_compile_args = ['-std=c99'],
-                    include_dirs = get_numpy_include_dirs(),
-                    sources = ['sparsesvdmodule.c', 'SVDLIBC/las2.c', 'SVDLIBC/svdlib.c', 'SVDLIBC/svdutil.c'])
+from setuptools import setup
 
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-setup(
-    name = 'sparsesvd',
-    version = '0.1.8',
-    description = 'Python module that wraps SVDLIBC, a library for sparse Singular Value Decomposition.',
-    long_description = read('README.rst'),
-    license = 'BSD',
-    keywords = 'Singular Value Decomposition, SVD, sparse SVD',
-    # there is a bug in python2.5, preventing distutils from using any non-ascii characters :( http://bugs.python.org/issue2562
-    author = 'Radim Rehurek', # u'Radim Řehůřek', # <- should really be this...
-    author_email = 'radimrehurek@seznam.cz',
-    url = 'http://pypi.python.org/pypi/sparsesvd',
-    download_url = 'http://pypi.python.org/pypi/sparsesvd',
-    zip_safe = False,
-    platforms = 'any',
+def setup_package():
+    META_DATA = dict(
+        name='sparsesvd',
+        version='0.1.8-disqus1',
+        description='Python module that wraps SVDLIBC, a library for sparse Singular Value Decomposition.',
+        long_description=read('README.rst'),
+        license='BSD',
+        keywords='Singular Value Decomposition, SVD, sparse SVD',
+        # there is a bug in python2.5, preventing distutils from using any non-ascii characters :( http://bugs.python.org/issue2562
+        author='Radim Rehurek',  # u'Radim Řehůřek', # <- should really be this...
+        author_email='radimrehurek@seznam.cz',
+        url='http://pypi.python.org/pypi/sparsesvd',
+        download_url='http://pypi.python.org/pypi/sparsesvd',
+        zip_safe=False,
+        platforms='any',
 
-    classifiers = [ # from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Intended Audience :: Science/Research',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.5',
-        'Topic :: Scientific/Engineering :: Mathematics',
-        'Topic :: Scientific/Engineering :: Artificial Intelligence',
-        'Topic :: Scientific/Engineering :: Information Analysis',
-        'Topic :: Text Processing :: Linguistic',
-        'License :: OSI Approved :: BSD License',
-    ],
+        classifiers=[  # from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+            'Development Status :: 4 - Beta',
+            'Environment :: Console',
+            'Intended Audience :: Science/Research',
+            'Operating System :: OS Independent',
+            'Programming Language :: Python :: 2.5',
+            'Topic :: Scientific/Engineering :: Mathematics',
+            'Topic :: Scientific/Engineering :: Artificial Intelligence',
+            'Topic :: Scientific/Engineering :: Information Analysis',
+            'Topic :: Text Processing :: Linguistic',
+            'License :: OSI Approved :: BSD License',
+        ],
 
-    test_suite = "test",
+        test_suite="test",
 
-    install_requires = [
-        'scipy >= 0.6.0',
-    ],
+        install_requires=[
+            'scipy >= 0.6.0',
+        ],
 
-    include_package_data = True,
+        include_package_data=True,
 
-    entry_points = {},
+        entry_points={},
+    )
 
-    ext_modules = [module],
+    if '--help' in sys.argv[1:] or (len(sys.argv) > 1 and sys.argv[1] in ('--help-commands', 'egg_info', '--version')):
+        pass
+    else:
+        from setuptools import Extension
+        from numpy.distutils.misc_util import get_numpy_include_dirs
 
-)
+        module = Extension('sparsesvd',
+            extra_compile_args=['-std=c99'],
+            include_dirs=get_numpy_include_dirs(),
+            sources=['sparsesvdmodule.c', 'SVDLIBC/las2.c', 'SVDLIBC/svdlib.c', 'SVDLIBC/svdutil.c'])
+
+        META_DATA['ext_modules'] = [module]
+
+    setup(**META_DATA)
+
+
+if __name__ == '__main__':
+    setup_package()
